@@ -41,17 +41,19 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value
-    this.dep = new Dep()
+    this.dep = new Dep() // 新建一个管家
     this.vmCount = 0
-    def(value, '__ob__', this)
+    def(value, '__ob__', this) // 在observer实例上绑定一个__ob__
     if (Array.isArray(value)) {
       if (hasProto) {
-        protoAugment(value, arrayMethods)
+        protoAugment(value, arrayMethods) // 把带有数组原型的对象{}绑定到__proto__
       } else {
         copyAugment(value, arrayMethods, arrayKeys)
       }
+      // 如果是数组的话遍历执行
       this.observeArray(value)
     } else {
+      // 遍历对象
       this.walk(value)
     }
   }
@@ -108,6 +110,7 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * or the existing observer if the value already has one.
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
+  // 如果不是对象或者是虚拟节点则返回
   if (!isObject(value) || value instanceof VNode) {
     return
   }
@@ -121,6 +124,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
+    // 新建一个观察者
     ob = new Observer(value)
   }
   if (asRootData && ob) {
@@ -139,7 +143,8 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
-  const dep = new Dep()
+  // 新建一个管家（本职就是观察者模式）用于通知更新
+  const dep = new Dep() // 发布者
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
   if (property && property.configurable === false) {
@@ -153,16 +158,18 @@ export function defineReactive (
     val = obj[key]
   }
 
-  let childOb = !shallow && observe(val)
+  let childOb = !shallow && observe(val) // val可能本身是一个对象，所以需要递归调用observe
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
+        // 收集依赖
         dep.depend()
         if (childOb) {
           childOb.dep.depend()
+          // 如果是数组的话，数组里面可能也有对象，也要订阅他们
           if (Array.isArray(value)) {
             dependArray(value)
           }
@@ -187,8 +194,8 @@ export function defineReactive (
       } else {
         val = newVal
       }
-      childOb = !shallow && observe(newVal)
-      dep.notify()
+      childOb = !shallow && observe(newVal) // 新值可能是一个对象，需要重新进行处理
+      dep.notify() // 通知订阅者（Watcher）更新
     }
   })
 }

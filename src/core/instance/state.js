@@ -123,6 +123,8 @@ function initData (vm: Component) {
     )
   }
   // proxy data on instance
+  // 判断有无和props和methods上面的属性名重复
+  // 将数据代理对_data上面
   const keys = Object.keys(data)
   const props = vm.$options.props
   const methods = vm.$options.methods

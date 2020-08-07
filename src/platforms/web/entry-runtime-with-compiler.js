@@ -31,8 +31,8 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
-  if (!options.render) {
-    let template = options.template
+  if (!options.render) { // 判断有没有写render函数，这里可以看出render的优先级最高
+    let template = options.template // 其次是template
     if (template) {
       if (typeof template === 'string') {
         if (template.charAt(0) === '#') {

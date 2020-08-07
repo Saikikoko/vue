@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    {{context}}
+    <!-- <anchored-heading :level="1">
+      <span>hello</span>
+    </anchored-heading> -->
+  </div>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        context: 'foo'
+      },
+      render: function (h) {
+        return (
+          <AnchoredHeading level={1}>
+            <span>Hello</span> world!
+          </AnchoredHeading>
+        )
+      }
+    })
+    // 使用createElement
+    Vue.component('anchored-heading', {
+      render: function (createElement) {
+        // console.log(createElement('h2', 'test'));
+        return createElement(
+          'h' + this.level,   // 标签名称
+          this.$slots.default // 子节点数组
+        )
+      },
+      props: {
+        level: {
+          type: Number,
+          required: true
+        }
+      }
+    })
+    // JSX语法
+    // Vue.component('anchored-heading', {
+    //   render: function (createElement) {
+    //     return ()
+    //   },
+    // })
+    app.$mount()
+  </script>
+</body>
+</html>

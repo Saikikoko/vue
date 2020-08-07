@@ -20,7 +20,7 @@ export default class Dep {
     this.subs = []
   }
 
-  addSub (sub: Watcher) {
+  addSub (sub: Watcher) { // watcher就是我们的订阅者
     this.subs.push(sub)
   }
 
